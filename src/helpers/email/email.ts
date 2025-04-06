@@ -3,7 +3,7 @@ import logger from '../../config/logger';
 import { Config } from '../../config';
 
 export class EmailService {
-    sendEmail = async (to: string, subject: string) => {
+    sendEmail = async (to: string, emailBody: string) => {
         const transporter = nodemailer.createTransport({
             service: 'Gmail',
             host: 'smtp.gmail.com',
@@ -27,8 +27,8 @@ export class EmailService {
         const info = await transporter.sendMail({
             from: Config.EMAIL,
             to,
-            subject,
-            html: 'Test',
+            subject: 'Outreach Email',
+            html: emailBody,
         });
         logger.info('Email sent', info.messageId);
     };
