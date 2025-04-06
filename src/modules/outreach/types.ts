@@ -1,8 +1,12 @@
 import { Request } from 'express';
 
-export interface ScheduleEmailRequest extends Request {
+export interface EmailRequestData {
     time: string;
     emailBody: string;
     subject: string;
     to: string;
+}
+
+export interface ScheduleEmailRequest extends Request {
+    body: EmailRequestData;
 }

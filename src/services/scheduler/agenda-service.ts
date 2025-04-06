@@ -1,6 +1,8 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { Config } from '../../config';
 import { EmailService } from '../../helpers/email/email';
+import { EmailRequestData } from '../../modules/outreach/types';
+
 export class AgendaService {
     private agenda: Agenda;
 
@@ -13,20 +15,20 @@ export class AgendaService {
 
     private defineJobs() {
         this.agenda.define('send-email', async (job: Job) => {
-            console.log('Email sent', Date.now());
-            const { to, subject, body } = job.attrs.data as {
-                to: string;
-                subject: string;
-                body: string;
-            };
+            const { to, emailBody, time, subject } = job.attrs.data as EmailRequestData;
 
-            // try {
-            //     await this.emailService.sendEmail(to, body);
-            //     console.log(`✅ Email sent to ${to}`);
-            // } catch (err) {
-            //     console.error(`❌ Failed to send email to ${to}`, err);
-            // }
+            console.log(to, emailBody, time, subject);
+            try {
+                await this.emailService.sendEmail(to, emailBody);
+                console.log(`✅ Email sent to ${to}`);
+            } catch (err) {
+                console.error(`❌ Failed to send email to ${to}`, err);
+            }
         });
+    }
+
+    public async scheduleEmail(emailData: EmailRequestData) {
+        await this.agenda.schedule('5 seconds', 'send-email', emailData);
     }
 
     public async start() {

@@ -3,11 +3,16 @@ import { asyncWrapper } from '../../common/utils/async-wrapper';
 import { OutreachController } from './controller';
 import logger from '../../config/logger';
 import { EmailService } from '../../helpers/email/email';
+import { AgendaService } from '../../services/scheduler/agenda-service';
 
 const router = express.Router();
 
+// Dependencies
 const emailService = new EmailService();
-const outreachController = new OutreachController(logger, emailService);
-router.post('/schedule', asyncWrapper(outreachController.send));
+const agendaService = new AgendaService(emailService);
+
+const outreachController = new OutreachController(agendaService);
+
+router.post('/schedule', asyncWrapper(outreachController.scheduleEmail));
 
 export default router;
