@@ -2,11 +2,15 @@ import { Agenda, Job } from '@hokify/agenda';
 import { Config } from '../../config';
 import { EmailService } from '../../helpers/email/email';
 import { EmailRequestData } from '../../modules/outreach/types';
+import { Logger } from 'winston';
 
 export class AgendaService {
     private agenda: Agenda;
 
-    constructor(private readonly emailService: EmailService) {
+    constructor(
+        private readonly emailService: EmailService,
+        private readonly logger: Logger,
+    ) {
         this.agenda = new Agenda({
             db: { address: Config.MONGO_URI!, collection: 'agendaEmails' },
         });
@@ -15,31 +19,30 @@ export class AgendaService {
 
     private defineJobs() {
         this.agenda.define('send-email', async (job: Job) => {
-            const { to, emailBody, time, subject } = job.attrs.data as EmailRequestData;
-
-            console.log(to, emailBody, time, subject);
+            const { to, emailBody, time, subject } = job.attrs
+                .data as EmailRequestData;
             try {
                 await this.emailService.sendEmail(to, emailBody);
-                console.log(`✅ Email sent to ${to}`);
+                this.logger.info(`✅ Email sent to ${to}`);
             } catch (err) {
-                console.error(`❌ Failed to send email to ${to}`, err);
+                this.logger.error(`❌ Failed to send email to ${to}`, err);
             }
         });
     }
 
     public async scheduleEmail(emailData: EmailRequestData) {
-        await this.agenda.schedule('5 seconds', 'send-email', emailData);
+        await this.agenda.schedule('1 minute', 'send-email', emailData);
     }
 
     public async start() {
         await this.agenda.start();
-        await this.agenda.every('5 seconds', 'send-email');
-        console.log('📆 Agenda started');
+        await this.agenda.every('1 minute', 'send-email');
+        this.logger.info('📆 Agenda started');
     }
 
     public async stop() {
         await this.agenda.stop();
-        console.log('🛑 Agenda stopped');
+        this.logger.info('🛑 Agenda stopped');
     }
 
     public getInstance() {

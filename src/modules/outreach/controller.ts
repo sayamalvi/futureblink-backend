@@ -5,11 +5,29 @@ import type { ScheduleEmailRequest, EmailRequestData } from './types';
 import { AgendaService } from '../../services/scheduler/agenda-service';
 
 export class OutreachController {
-    constructor(private readonly agendaService: AgendaService) {}
+    constructor(
+        private readonly agendaService: AgendaService,
+        private readonly logger: Logger,
+    ) {}
 
     scheduleEmail = async (req: ScheduleEmailRequest, res: Response) => {
-        const { time, emailBody, subject, to } = req.body;
-        await this.agendaService.scheduleEmail({ time, emailBody, subject, to });
-        res.json({ msg: 'Email scheduled successfully' });
+        const emailRequests = req.body;
+
+        try {
+            const schedulePromises = emailRequests.map((emailData) =>
+                this.agendaService.scheduleEmail(emailData),
+            );
+
+            await Promise.all(schedulePromises);
+            this.logger.info(
+                `Successfully scheduled ${emailRequests.length} emails`,
+            );
+            res.json({
+                msg: `Successfully scheduled ${emailRequests.length} emails`,
+            });
+        } catch (error) {
+            this.logger.error('Failed to schedule emails');
+            res.status(500).json({ error: 'Failed to schedule emails' });
+        }
     };
 }

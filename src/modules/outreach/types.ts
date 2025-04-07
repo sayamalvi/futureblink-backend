@@ -8,5 +8,5 @@ export interface EmailRequestData {
 }
 
 export interface ScheduleEmailRequest extends Request {
-    body: EmailRequestData;
+    body: EmailRequestData[];
 }

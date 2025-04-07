@@ -13,7 +13,7 @@ const startServer = async () => {
         logger.info('✅ MongoDB Connected');
 
         const emailService = new EmailService();
-        const agendaService = new AgendaService(emailService);
+        const agendaService = new AgendaService(emailService, logger);
 
         app.listen(PORT, async () => {
             logger.info(
@@ -29,7 +29,6 @@ const startServer = async () => {
 
         process.on('SIGINT', handleShutdown);
         process.on('SIGTERM', handleShutdown);
-        
     } catch (err) {
         if (err instanceof Error) {
             logger.error(err.message);

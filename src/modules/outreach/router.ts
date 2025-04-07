@@ -9,9 +9,9 @@ const router = express.Router();
 
 // Dependencies
 const emailService = new EmailService();
-const agendaService = new AgendaService(emailService);
+const agendaService = new AgendaService(emailService, logger);
 
-const outreachController = new OutreachController(agendaService);
+const outreachController = new OutreachController(agendaService, logger);
 
 router.post('/schedule', asyncWrapper(outreachController.scheduleEmail));
 
