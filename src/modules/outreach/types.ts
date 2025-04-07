@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 export interface EmailRequestData {
-    time: string;
+    time: number;
     emailBody: string;
     subject: string;
     to: string;

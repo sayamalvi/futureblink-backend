@@ -1,6 +1,6 @@
 import { Agenda, Job } from '@hokify/agenda';
 import { Config } from '../../config';
-import { EmailService } from '../../helpers/email/email';
+import { EmailService } from '../email/email';
 import { EmailRequestData } from '../../modules/outreach/types';
 import { Logger } from 'winston';
 
@@ -32,6 +32,13 @@ export class AgendaService {
 
     public async scheduleEmail(emailData: EmailRequestData) {
         await this.agenda.schedule('1 minute', 'send-email', emailData);
+        if (emailData.time > 0) {
+            await this.agenda.schedule(
+                `${emailData.time} minutes`,
+                'send-email',
+                emailData,
+            );
+        }
     }
 
     public async start() {

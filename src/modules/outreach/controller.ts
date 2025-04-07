@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Logger } from 'winston';
-import { EmailService } from '../../helpers/email/email';
+import { EmailService } from '../../services/email/email';
 import type { ScheduleEmailRequest, EmailRequestData } from './types';
 import { AgendaService } from '../../services/scheduler/agenda-service';
 

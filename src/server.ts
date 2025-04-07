@@ -2,7 +2,7 @@ import app from './app';
 import logger from './config/logger';
 import { initDB } from './config/db';
 import { Config } from './config';
-import { EmailService } from './helpers/email/email';
+import { EmailService } from './services/email/email';
 import { AgendaService } from './services/scheduler/agenda-service';
 
 const startServer = async () => {
