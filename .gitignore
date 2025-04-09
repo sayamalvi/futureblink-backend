@@ -131,6 +131,5 @@ dist
 
 
 /config
+.env.*
 .env
-.env.development
-.env.production
